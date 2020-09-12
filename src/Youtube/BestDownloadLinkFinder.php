@@ -20,6 +20,7 @@ class BestDownloadLinkFinder
 
         $bestFormat = 0;
         $bestLink = null;
+
         foreach ($links as $link) {
             if (
                 strpos($link['format'], 'mp4') !== false
