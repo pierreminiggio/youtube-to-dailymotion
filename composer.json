@@ -1,0 +1,19 @@
+{
+    "name": "pierreminiggio/youtube-channel-cloner",
+    "authors": [
+        {
+            "name": "Pierre MINIGGIO",
+            "email": "pierre@miniggiodev.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PierreMiniggio\\YoutubeChannelCloner\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "require": {},
+    "require-dev": {}
+}
