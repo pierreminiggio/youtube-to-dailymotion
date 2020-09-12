@@ -16,10 +16,13 @@ class App
         $downloader = new VideoFileDownloader();
 
         foreach ($youtubeVideos as $youtubeVideo) {
-            $downloader->download(
-                $youtubeVideo->getUrl(),
-                $youtubeVideo->getSavedPath()
-            );
+            $videoFilePath = $youtubeVideo->getSavedPath();
+            if (! file_exists($videoFilePath)) {
+                $downloader->download(
+                    $youtubeVideo->getUrl(),
+                    $videoFilePath
+                );
+            }
         }
 
         return 0;
