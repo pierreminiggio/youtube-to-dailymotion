@@ -2,6 +2,7 @@
 
 namespace PierreMiniggio\YoutubeChannelCloner\Youtube;
 
+use Exception;
 use YouTube\YouTubeDownloader;
 
 class BestDownloadLinkFinder
@@ -14,6 +15,9 @@ class BestDownloadLinkFinder
         $this->yt = new YouTubeDownloader();
     }
 
+    /**
+     * @throws Exception
+     */
     public function find(string $youtubeLink): string
     {
         $links = $this->yt->getDownloadLinks($youtubeLink);
@@ -33,6 +37,10 @@ class BestDownloadLinkFinder
                     $bestLink = $link['url'];
                 }
             }
+        }
+
+        if ($bestLink === null) {
+            throw new Exception('Best link not found');
         }
         
         return $bestLink;
