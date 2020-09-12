@@ -47,7 +47,7 @@ class LatestVideosFetcher
                     $description = $mediaGroup->xpath('media:description')[0]->__toString();
                 }
 
-                $videos[] = new YoutubeVideo($id, $url, $thumbnail, $title, $description);
+                $videos[] = new YoutubeVideo($username, $id, $url, $thumbnail, $title, $description);
             }
         }
 

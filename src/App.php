@@ -16,11 +16,10 @@ class App
         $downloader = new VideoFileDownloader();
 
         foreach ($youtubeVideos as $youtubeVideo) {
-            $filePath = $downloader->download(
+            $downloader->download(
                 $youtubeVideo->getUrl(),
-                'videos' . DIRECTORY_SEPARATOR . $channel . DIRECTORY_SEPARATOR . $youtubeVideo->getTitle()
+                $youtubeVideo->getSavedPath()
             );
-            var_dump($filePath);
         }
 
         return 0;

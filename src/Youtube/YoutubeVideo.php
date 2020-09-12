@@ -5,6 +5,7 @@ namespace PierreMiniggio\YoutubeChannelCloner\Youtube;
 class YoutubeVideo
 {
 
+    private string $channel;
     private string $id;
     private string $url;
     private string $thumbnail;
@@ -12,6 +13,7 @@ class YoutubeVideo
     private string $description;
 
     public function __construct(
+        string $channel,
         string $id,
         string $url,
         string $thumbnail,
@@ -19,6 +21,7 @@ class YoutubeVideo
         string $description
     )
     {
+        $this->channel = $channel;
         $this->id = $id;
         $this->url = $url;
         $this->thumbnail = $thumbnail;
@@ -49,5 +52,24 @@ class YoutubeVideo
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    private function getSanitizedTitle(): string
+    {
+        return mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $this->title);
+    }
+
+    public function getSavedPath(): string
+    {
+        return
+            getcwd()
+            . DIRECTORY_SEPARATOR
+            . 'videos'
+            . DIRECTORY_SEPARATOR
+            . $this->channel
+            . DIRECTORY_SEPARATOR
+            . $this->getSanitizedTitle()
+            . '.mp4'
+        ;
     }
 }

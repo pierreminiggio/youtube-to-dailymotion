@@ -17,20 +17,20 @@ class VideoFileDownloader
     /**
      * @throws Exception
      */
-    public function download(string $youtubeLink, string $fileName): string
+    public function download(string $youtubeLink, string $fileName): void
     {
-        return $this->tryDownload($youtubeLink, $fileName, 10);
+        $this->tryDownload($youtubeLink, $fileName, 10);
     }
 
     /**
      * @throws Exception
      */
-    private function tryDownload(string $youtubeLink, string $fileName, int $triesLeft): string
+    private function tryDownload(string $youtubeLink, string $fileName, int $triesLeft): void
     {
         $fileUrl = $this->finder->find($youtubeLink);
         
         //The path & filename to save to.
-        $saveTo = $fileName . '.mp4';
+        $saveTo = $fileName;
 
         $this->createFoldersIfNeeded($saveTo);
         
@@ -68,12 +68,10 @@ class VideoFileDownloader
         fclose($fp);
 
         if ($statusCode === 302 && $triesLeft) {
-            return $this->tryDownload($youtubeLink, $fileName, $triesLeft - 1);
+            $this->tryDownload($youtubeLink, $fileName, $triesLeft - 1);
         } elseif ($statusCode !== 200) {
             throw new Exception("Status Code: " . $statusCode);
         }
-
-        return getcwd() . DIRECTORY_SEPARATOR . $saveTo;
     }
 
     public function createFoldersIfNeeded(string $saveTo): void
