@@ -30,7 +30,9 @@ class VideoFileDownloader
         $fileUrl = $this->finder->find($youtubeLink);
         
         //The path & filename to save to.
-        $saveTo = 'videos' . DIRECTORY_SEPARATOR . $fileName . '.mp4';
+        $saveTo = $fileName . '.mp4';
+
+        $this->createFoldersIfNeeded($saveTo);
         
         //Open file handler.
         $fp = fopen($saveTo, 'w+');
@@ -72,5 +74,21 @@ class VideoFileDownloader
         }
 
         return getcwd() . DIRECTORY_SEPARATOR . $saveTo;
+    }
+
+    public function createFoldersIfNeeded(string $saveTo): void
+    {
+        $explodedPath = explode(DIRECTORY_SEPARATOR, $saveTo);
+
+        $prevPath = '';
+        for ($i = 0; $i < count($explodedPath) - 1; $i++) {
+            if ($prevPath) {
+                $prevPath .= DIRECTORY_SEPARATOR;
+            }
+            $prevPath .= $explodedPath[$i];
+            if (! is_dir($prevPath)) {
+                mkdir($prevPath);
+            }
+        }
     }
 }

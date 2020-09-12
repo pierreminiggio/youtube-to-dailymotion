@@ -9,13 +9,20 @@ class App
 {
     public function run(): int
     {
-        $filePath = (new VideoFileDownloader())->download(
-            'https://www.youtube.com/watch?v=j4HiDzdhB8k',
-            'test 1'
-        );
-        var_dump($filePath);
-        /*$youtubeVideos = (new LatestVideosFetcher())->fetch('catoonthecat');
-        var_dump($youtubeVideos);*/
+        $channel = 'catoonthecat';
+
+        $youtubeVideos = (new LatestVideosFetcher())->fetch($channel);
+
+        $downloader = new VideoFileDownloader();
+
+        foreach ($youtubeVideos as $youtubeVideo) {
+            $filePath = $downloader->download(
+                $youtubeVideo->getUrl(),
+                'videos' . DIRECTORY_SEPARATOR . $channel . DIRECTORY_SEPARATOR . $youtubeVideo->getTitle()
+            );
+            var_dump($filePath);
+        }
+
         return 0;
     }
 }
