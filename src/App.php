@@ -9,19 +9,24 @@ class App
 {
     public function run(): int
     {
-        $channel = 'catoonthecat';
+        $config = require(getcwd() . DIRECTORY_SEPARATOR . 'config.php');
 
-        $youtubeVideos = (new LatestVideosFetcher())->fetch($channel);
+        $lastestYoutubeVideosFetcher = new LatestVideosFetcher();
+        $youtubeVideoDownloader = new VideoFileDownloader();
+    
+        foreach ($config['groups'] as $group) {
+            $youtubeChannel = $group['youtube'];
 
-        $downloader = new VideoFileDownloader();
+            $youtubeVideos = $lastestYoutubeVideosFetcher->fetch($youtubeChannel);
 
-        foreach ($youtubeVideos as $youtubeVideo) {
-            $videoFilePath = $youtubeVideo->getSavedPath();
-            if (! file_exists($videoFilePath)) {
-                $downloader->download(
-                    $youtubeVideo->getUrl(),
-                    $videoFilePath
-                );
+            foreach ($youtubeVideos as $youtubeVideo) {
+                $videoFilePath = $youtubeVideo->getSavedPath();
+                if (! file_exists($videoFilePath)) {
+                    $youtubeVideoDownloader->download(
+                        $youtubeVideo->getUrl(),
+                        $videoFilePath
+                    );
+                }
             }
         }
 
