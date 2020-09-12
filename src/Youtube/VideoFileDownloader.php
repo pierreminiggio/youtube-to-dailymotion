@@ -7,9 +7,27 @@ use Exception;
 class VideoFileDownloader
 {
 
+    private BestDownloadLinkFinder $finder;
+
+    public function __construct()
+    {
+        $this->finder = new BestDownloadLinkFinder();
+    }
+
+    /**
+     * @throws Exception
+     */
     public function download(string $youtubeLink, string $fileName): string
     {
-        $fileUrl = (new BestDownloadLinkFinder())->find($youtubeLink);
+        return $this->tryDownload($youtubeLink, $fileName, 10);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function tryDownload(string $youtubeLink, string $fileName, int $triesLeft): string
+    {
+        $fileUrl = $this->finder->find($youtubeLink);
         
         //The path & filename to save to.
         $saveTo = 'videos' . DIRECTORY_SEPARATOR . $fileName . '.mp4';
@@ -46,11 +64,13 @@ class VideoFileDownloader
         
         //Close the file handler.
         fclose($fp);
-        
-        if ($statusCode !== 200) {
+
+        if ($statusCode === 302 && $triesLeft) {
+            return $this->tryDownload($youtubeLink, $fileName, $triesLeft - 1);
+        } elseif ($statusCode !== 200) {
             throw new Exception("Status Code: " . $statusCode);
         }
 
-        return $saveTo;
+        return getcwd() . DIRECTORY_SEPARATOR . $saveTo;
     }
 }
