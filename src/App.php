@@ -2,7 +2,8 @@
 
 namespace PierreMiniggio\YoutubeChannelCloner;
 
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\DailymotionApiLogin;
+use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionApiLogin;
+use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionUploadUrl;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
 use PierreMiniggio\YoutubeChannelCloner\Youtube\LatestVideosFetcher as LatestYoutubeVideoFetcher;
 use PierreMiniggio\YoutubeChannelCloner\Youtube\VideoFileDownloader;
@@ -36,6 +37,7 @@ class App
                 $dmApiKey = $group['dailymotion']['api']['key'];
                 $dmApiSecret = $group['dailymotion']['api']['secret'];
                 $dmLogin = new DailymotionApiLogin();
+                $dmUploadUrlCreator = new DailymotionUploadUrl();
 
                 $dmVideos = $dmVideoFetcher->fetch($dmChannelId);
                 $dmVideosToCheck = $dmVideos;
@@ -82,10 +84,17 @@ class App
                             . PHP_EOL
                             . 'sur DailyMotion...'
                         ;
-                        $token = $dmLogin->login($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
+                        $dmToken = $dmLogin->login($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
 
-                        if ($token === null) {
+                        if ($dmToken === null) {
                             echo PHP_EOL . 'Erreur lors du login.';
+                        } else {
+                            $dmUploadUrl = $dmUploadUrlCreator->create($dmToken);
+                            if ($dmUploadUrl === null) {
+                                echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
+                            } else {
+                                die($dmUploadUrl);
+                            }
                         }
                         // Upload to DM
                         // TODO upload video
