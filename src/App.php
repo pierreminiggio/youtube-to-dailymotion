@@ -3,6 +3,7 @@
 namespace PierreMiniggio\YoutubeChannelCloner;
 
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionApiLogin;
+use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionFileUploader;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionUploadUrl;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
 use PierreMiniggio\YoutubeChannelCloner\Youtube\LatestVideosFetcher as LatestYoutubeVideoFetcher;
@@ -36,8 +37,10 @@ class App
                 $dmPassword = $group['dailymotion']['password'];
                 $dmApiKey = $group['dailymotion']['api']['key'];
                 $dmApiSecret = $group['dailymotion']['api']['secret'];
+
                 $dmLogin = new DailymotionApiLogin();
                 $dmUploadUrlCreator = new DailymotionUploadUrl();
+                $dmFileUploader = new DailymotionFileUploader($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
 
                 $dmVideos = $dmVideoFetcher->fetch($dmChannelId);
                 $dmVideosToCheck = $dmVideos;
@@ -93,7 +96,14 @@ class App
                             if ($dmUploadUrl === null) {
                                 echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
                             } else {
-                                die($dmUploadUrl);
+                                var_dump($dmUploadUrl, $dmToken);
+                                $dmVideoUrl = $dmFileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
+                                if ($dmVideoUrl === null) {
+                                    echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
+                                } else {
+
+                                }
+                                die('test');
                             }
                         }
                         // Upload to DM
