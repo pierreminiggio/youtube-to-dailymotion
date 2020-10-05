@@ -101,7 +101,7 @@ class App
                                 if ($dmVideoUrl === null) {
                                     echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
                                 } else {
-
+                                    die($dmVideoUrl);
                                 }
                                 die('test');
                             }

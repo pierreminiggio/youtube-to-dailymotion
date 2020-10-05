@@ -8,7 +8,7 @@ class DailymotionFileUploader
     public function upload(string $uploadUrl, string $filePath): ?string
     {
         $formattedFile = function_exists('curl_file_create')
-            ? curl_file_create($filePath)
+            ? curl_file_create(str_replace('\\', '/', $filePath))
             : sprintf("@%s", $filePath)
         ;
 
@@ -24,7 +24,6 @@ class DailymotionFileUploader
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $response = curl_exec($ch);
-        var_dump($filePath, $response); die();
 
         curl_close($ch);
 
