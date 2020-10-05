@@ -16,7 +16,7 @@ class LatestVideosFetcher
         $curl = curl_init();
 
         // On paramètre le CURL
-        $url = "https://api.dailymotion.com/user/$username/videos?family_filter=false";
+        $url = "https://api.dailymotion.com/user/$username/videos?family_filter=false&limit=15";
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_FAILONERROR, 1);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
