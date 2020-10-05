@@ -60,6 +60,7 @@ class App
 
                     if (! $isVideoUploadedOnDM) {
 
+                        var_dump($youtubeVideo->getTitle());
                         // Upload to DM
                         // TODO upload video
 
