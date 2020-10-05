@@ -96,7 +96,6 @@ class App
                             if ($dmUploadUrl === null) {
                                 echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
                             } else {
-                                var_dump($dmUploadUrl, $dmToken);
                                 $dmVideoUrl = $dmFileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
                                 if ($dmVideoUrl === null) {
                                     echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
