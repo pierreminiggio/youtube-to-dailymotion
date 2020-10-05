@@ -18,7 +18,8 @@ class DailymotionApiLogin
                 'client_id' => $clientId,
                 'client_secret' => $clientSecret,
                 'username' => $username,
-                'password' => $password
+                'password' => $password,
+                'scope' => 'manage_videos'
             ])
         );
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
