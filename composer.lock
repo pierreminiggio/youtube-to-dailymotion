@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ec6c6570ea4964ddbe763c77588ea20",
+    "content-hash": "8e8e128692507b49e82b12022223fb29",
     "packages": [
         {
             "name": "athlon1600/youtube-downloader",
@@ -45,6 +45,39 @@
                 "youtube downloader"
             ],
             "time": "2020-07-28T15:14:30+00:00"
+        },
+        {
+            "name": "dailymotion/sdk",
+            "version": "1.6.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dailymotion/dailymotion-sdk-php.git",
+                "reference": "0f558978785f9a6ab9e59c393041d4896550973b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dailymotion/dailymotion-sdk-php/zipball/0f558978785f9a6ab9e59c393041d4896550973b",
+                "reference": "0f558978785f9a6ab9e59c393041d4896550973b",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Dailymotion.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Dailymotion PHP SDK",
+            "homepage": "http://dailymotion.com",
+            "keywords": [
+                "api",
+                "dailymotion",
+                "sdk"
+            ],
+            "time": "2015-11-20T11:18:32+00:00"
         }
     ],
     "packages-dev": [],

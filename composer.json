@@ -15,7 +15,8 @@
         "sort-packages": true
     },
     "require": {
-        "athlon1600/youtube-downloader": "^2.1"
+        "athlon1600/youtube-downloader": "^2.1",
+        "dailymotion/sdk": "^1.6"
     },
     "require-dev": {}
 }

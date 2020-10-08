@@ -2,6 +2,8 @@
 
 namespace PierreMiniggio\YoutubeChannelCloner;
 
+use Dailymotion;
+use Exception;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionApiLogin;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionFileUploader;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionUploadUrl;
@@ -42,7 +44,20 @@ class App
                 $dmLogin = new DailymotionApiLogin();
                 $dmUploadUrlCreator = new DailymotionUploadUrl();
                 $dmFileUploader = new DailymotionFileUploader($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
-                $dmVideoCreator = new DailymotionVideoCreator();
+                $dmAPI = new Dailymotion();
+                $dmAPI->setGrantType(
+                    Dailymotion::GRANT_TYPE_PASSWORD,
+                    $dmApiKey,
+                    $dmApiSecret,
+                    [
+                        'manage_videos'
+                    ],
+                    [
+                        'username' => $dmUsername,
+                        'password' => $dmPassword
+                    ]
+                );
+                $dmVideoCreator = new DailymotionVideoCreator($dmAPI);
 
                 $dmVideos = $dmVideoFetcher->fetch($dmChannelId);
                 $dmVideosToCheck = $dmVideos;
@@ -102,16 +117,29 @@ class App
                                 if ($dmVideoUrl === null) {
                                     echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
                                 } else {
-                                    $dmVideoId = $dmVideoCreator->create(
-                                        $dmToken,
-                                        $dmVideoUrl,
-                                        $youtubeVideo->getTitle()
-                                    );
-                                    die($dmVideoId);
+                                    try {
+                                        $dmVideoId = $dmVideoCreator->create(
+                                            $dmVideoUrl,
+                                            $youtubeVideo->getTitle(),
+                                            'Vidéo disponible sur Youtube : ' . $youtubeVideo->getUrl() . '
+
+' . $youtubeVideo->getDescription()
+                                        );
+
+                                        if ($dmVideoId) {
+                                            echo PHP_EOL . 'Vidéo uploadée !';
+                                        }
+                                    } catch (Exception $e) {
+                                        echo PHP_EOL
+                                            . 'Erreur lors de la création de la vidéo : "'
+                                            . PHP_EOL
+                                            . $e->getMessage()
+                                            . '"'
+                                        ;
+                                    }
                                 }
                             }
                         }
-                        die($token);
                     }
                 }
             }
