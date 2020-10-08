@@ -50,7 +50,7 @@ class App
 
             $youtubeChannel = $group['youtube'];
 
-            $youtubeVideos = $lastestYoutubeVideosFetcher->fetch($youtubeChannel);
+            $youtubeVideos = array_reverse($lastestYoutubeVideosFetcher->fetch($youtubeChannel));
 
             foreach ($youtubeVideos as $youtubeVideo) {
                 // Download if not stored
