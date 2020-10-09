@@ -13,7 +13,6 @@ use PierreMiniggio\YoutubeChannelCloner\Youtube\YoutubeVideo;
 class DailymotionVideoUploaderIfNeeded
 {
 
-    private string $channelId;
     private string $username;
     private string $password;
     private string $apiKey;
@@ -35,7 +34,6 @@ class DailymotionVideoUploaderIfNeeded
         LatestVideosFetcher $dmVideoFetcher
     )
     {
-        $this->channelId = $channelId;
         $this->username = $username;
         $this->password = $password;
         $this->apiKey = $apiKey;
