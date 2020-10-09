@@ -32,7 +32,6 @@ class App
                 && isset($group['dailymotion']['api']['key'])
                 && isset($group['dailymotion']['api']['secret'])
             ) {
-
                 $dmVideoUploaderIfNeeded = new DailymotionVideoUploaderIfNeeded(
                     $group['dailymotion']['channelId'],
                     $group['dailymotion']['username'],
