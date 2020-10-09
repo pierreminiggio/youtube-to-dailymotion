@@ -13,39 +13,39 @@ use PierreMiniggio\YoutubeChannelCloner\Youtube\YoutubeVideo;
 class DailymotionVideoUploaderIfNeeded
 {
 
-    private string $dmChannelId;
-    private string $dmUsername;
-    private string $dmPassword;
-    private string $dmApiKey;
-    private string $dmApiSecret;
+    private string $channelId;
+    private string $username;
+    private string $password;
+    private string $apiKey;
+    private string $apiSecret;
 
-    private DailymotionApiLogin $dmLogin;
-    private DailymotionUploadUrl $dmUploadUrlCreator;
-    private DailymotionFileUploader $dmFileUploader;
+    private DailymotionApiLogin $login;
+    private DailymotionUploadUrl $uploadUrlCreator;
+    private DailymotionFileUploader $fileUploader;
 
     /** @var DailymotionVideo[] */
     private array $dmVideosToCheck;
 
     public function __construct(
-        string $dmChannelId,
-        string $dmUsername,
-        string $dmPassword,
-        string $dmApiKey,
-        string $dmApiSecret,
+        string $channelId,
+        string $username,
+        string $password,
+        string $apiKey,
+        string $apiSecret,
         LatestVideosFetcher $dmVideoFetcher
     )
     {
-        $this->dmChannelId = $dmChannelId;
-        $this->dmUsername = $dmUsername;
-        $this->dmPassword = $dmPassword;
-        $this->dmApiKey = $dmApiKey;
-        $this->dmApiSecret = $dmApiSecret;
+        $this->channelId = $channelId;
+        $this->username = $username;
+        $this->password = $password;
+        $this->apiKey = $apiKey;
+        $this->apiSecret = $apiSecret;
 
-        $this->dmLogin = new DailymotionApiLogin();
-        $this->dmUploadUrlCreator = new DailymotionUploadUrl();
-        $this->dmFileUploader = new DailymotionFileUploader($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
+        $this->login = new DailymotionApiLogin();
+        $this->uploadUrlCreator = new DailymotionUploadUrl();
+        $this->fileUploader = new DailymotionFileUploader($apiKey, $apiSecret, $username, $password);
 
-        $dmVideos = $dmVideoFetcher->fetch($dmChannelId);
+        $dmVideos = $dmVideoFetcher->fetch($channelId);
         $this->dmVideosToCheck = $dmVideos;
     }
 
@@ -54,19 +54,19 @@ class DailymotionVideoUploaderIfNeeded
         $dmAPI = new Dailymotion();
         $dmAPI->setGrantType(
             Dailymotion::GRANT_TYPE_PASSWORD,
-            $this->dmApiKey,
-            $this->dmApiSecret,
+            $this->apiKey,
+            $this->apiSecret,
             [
                 'manage_videos'
             ],
             [
-                'username' => $this->dmUsername,
-                'password' => $this->dmPassword
+                'username' => $this->username,
+                'password' => $this->password
             ]
         );
         $dmVideoCreator = new DailymotionVideoCreator($dmAPI);
 
-        if ($this->dmChannelId) {
+        if ($this->channelId) {
             // Check if on DM
             $isVideoUploadedOnDM = false;
             $nextDmVideosToCheck = [];
@@ -92,21 +92,21 @@ class DailymotionVideoUploaderIfNeeded
                     . PHP_EOL
                     . 'sur DailyMotion...'
                 ;
-                $dmToken = $this->dmLogin->login(
-                    $this->dmApiKey,
-                    $this->dmApiSecret,
-                    $this->dmUsername,
-                    $this->dmPassword
+                $dmToken = $this->login->login(
+                    $this->apiKey,
+                    $this->apiSecret,
+                    $this->username,
+                    $this->password
                 );
 
                 if ($dmToken === null) {
                     echo PHP_EOL . 'Erreur lors du login.';
                 } else {
-                    $dmUploadUrl = $this->dmUploadUrlCreator->create($dmToken);
+                    $dmUploadUrl = $this->uploadUrlCreator->create($dmToken);
                     if ($dmUploadUrl === null) {
                         echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
                     } else {
-                        $dmVideoUrl = $this->dmFileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
+                        $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
                         if ($dmVideoUrl === null) {
                             echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
                         } else {
