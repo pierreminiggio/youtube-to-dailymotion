@@ -8,9 +8,11 @@ use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionApiLogin;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionFileUploader;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionUploadUrl;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionVideoCreator;
+use PierreMiniggio\YoutubeChannelCloner\Dailymotion\DailymotionVideo;
 use PierreMiniggio\YoutubeChannelCloner\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
 use PierreMiniggio\YoutubeChannelCloner\Youtube\LatestVideosFetcher as LatestYoutubeVideoFetcher;
 use PierreMiniggio\YoutubeChannelCloner\Youtube\VideoFileDownloader;
+use PierreMiniggio\YoutubeChannelCloner\Youtube\YoutubeVideo;
 
 class App
 {
@@ -68,83 +70,118 @@ class App
             $youtubeVideos = array_reverse($lastestYoutubeVideosFetcher->fetch($youtubeChannel));
 
             foreach ($youtubeVideos as $youtubeVideo) {
-                // Download if not stored
-                $videoFilePath = $youtubeVideo->getSavedPath();
-                if (! file_exists($videoFilePath)) {
-                    $youtubeVideoDownloader->download(
-                        $youtubeVideo->getUrl(),
-                        $videoFilePath
-                    );
+
+                $this->downloadVideoIfNeeded($youtubeVideoDownloader, $youtubeVideo);
+                $this->uploadToDailymotionIfNeeded(
+                    $youtubeVideo,
+                    $dmChannelId,
+                    $dmVideosToCheck,
+                    $dmLogin,
+                    $dmApiKey,
+                    $dmApiSecret,
+                    $dmUsername,
+                    $dmPassword,
+                    $dmUploadUrlCreator,
+                    $dmFileUploader,
+                    $dmVideoCreator
+                );
+            }
+        }
+
+        return 0;
+    }
+
+    private function downloadVideoIfNeeded(VideoFileDownloader $downloader, YoutubeVideo $video): void
+    {
+        $videoFilePath = $video->getSavedPath();
+        if (! file_exists($videoFilePath)) {
+            $downloader->download(
+                $video->getUrl(),
+                $videoFilePath
+            );
+        }
+    }
+
+    /**
+     * @param DailymotionVideo[]
+     */
+    private function uploadToDailymotionIfNeeded(
+        YoutubeVideo $youtubeVideo,
+        string $dmChannelId,
+        array $dmVideosToCheck,
+        DailymotionApiLogin $dmLogin,
+        string $dmApiKey,
+        string $dmApiSecret,
+        string $dmUsername,
+        string $dmPassword,
+        DailymotionUploadUrl $dmUploadUrlCreator,
+        DailymotionFileUploader $dmFileUploader,
+        DailymotionVideoCreator $dmVideoCreator
+    ): void
+    {
+        if ($dmChannelId) {
+            // Check if on DM
+            $isVideoUploadedOnDM = false;
+            $nextDmVideosToCheck = [];
+            foreach ($dmVideosToCheck as $dmVideoToCheck) {
+                if ($dmVideoToCheck->getTitle() === $youtubeVideo->getTitle()) {
+                    $isVideoUploadedOnDM = true;
+                } else {
+                    $nextDmVideosToCheck[] = $dmVideoToCheck;
                 }
+            }
 
-                // Upload to DailyMotion if not uploaded
-                if ($dmChannelId) {
-                    // Check if on DM
-                    $isVideoUploadedOnDM = false;
-                    $nextDmVideosToCheck = [];
-                    foreach ($dmVideosToCheck as $dmVideoToCheck) {
-                        if ($dmVideoToCheck->getTitle() === $youtubeVideo->getTitle()) {
-                            $isVideoUploadedOnDM = true;
+            $dmVideosToCheck = $nextDmVideosToCheck;
+
+            if (! $isVideoUploadedOnDM) {
+                echo
+                    PHP_EOL
+                    . PHP_EOL
+                    . 'Upload video'
+                    . PHP_EOL
+                    . '"'
+                    . $youtubeVideo->getTitle()
+                    . '" '
+                    . PHP_EOL
+                    . 'sur DailyMotion...'
+                ;
+                $dmToken = $dmLogin->login($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
+
+                if ($dmToken === null) {
+                    echo PHP_EOL . 'Erreur lors du login.';
+                } else {
+                    $dmUploadUrl = $dmUploadUrlCreator->create($dmToken);
+                    if ($dmUploadUrl === null) {
+                        echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
+                    } else {
+                        $dmVideoUrl = $dmFileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
+                        if ($dmVideoUrl === null) {
+                            echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
                         } else {
-                            $nextDmVideosToCheck[] = $dmVideoToCheck;
-                        }
-                    }
-
-                    $dmVideosToCheck = $nextDmVideosToCheck;
-
-                    if (! $isVideoUploadedOnDM) {
-                        echo
-                            PHP_EOL
-                            . PHP_EOL
-                            . 'Upload video'
-                            . PHP_EOL
-                            . '"'
-                            . $youtubeVideo->getTitle()
-                            . '" '
-                            . PHP_EOL
-                            . 'sur DailyMotion...'
-                        ;
-                        $dmToken = $dmLogin->login($dmApiKey, $dmApiSecret, $dmUsername, $dmPassword);
-
-                        if ($dmToken === null) {
-                            echo PHP_EOL . 'Erreur lors du login.';
-                        } else {
-                            $dmUploadUrl = $dmUploadUrlCreator->create($dmToken);
-                            if ($dmUploadUrl === null) {
-                                echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
-                            } else {
-                                $dmVideoUrl = $dmFileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
-                                if ($dmVideoUrl === null) {
-                                    echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
-                                } else {
-                                    try {
-                                        $dmVideoId = $dmVideoCreator->create(
-                                            $dmVideoUrl,
-                                            $youtubeVideo->getTitle(),
-                                            'Vidéo disponible sur Youtube : ' . $youtubeVideo->getUrl() . '
+                            try {
+                                $dmVideoId = $dmVideoCreator->create(
+                                    $dmVideoUrl,
+                                    $youtubeVideo->getTitle(),
+                                    'Vidéo disponible sur Youtube : ' . $youtubeVideo->getUrl() . '
 
 ' . $youtubeVideo->getDescription()
-                                        );
+                                );
 
-                                        if ($dmVideoId) {
-                                            echo PHP_EOL . 'Vidéo uploadée !';
-                                        }
-                                    } catch (Exception $e) {
-                                        echo PHP_EOL
-                                            . 'Erreur lors de la création de la vidéo : "'
-                                            . PHP_EOL
-                                            . $e->getMessage()
-                                            . '"'
-                                        ;
-                                    }
+                                if ($dmVideoId) {
+                                    echo PHP_EOL . 'Vidéo uploadée !';
                                 }
+                            } catch (Exception $e) {
+                                echo PHP_EOL
+                                    . 'Erreur lors de la création de la vidéo : "'
+                                    . PHP_EOL
+                                    . $e->getMessage()
+                                    . '"'
+                                ;
                             }
                         }
                     }
                 }
             }
         }
-
-        return 0;
     }
 }
