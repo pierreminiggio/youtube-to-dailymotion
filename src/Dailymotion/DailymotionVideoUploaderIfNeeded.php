@@ -66,70 +66,68 @@ class DailymotionVideoUploaderIfNeeded
         );
         $dmVideoCreator = new DailymotionVideoCreator($dmAPI);
 
-        if ($this->channelId) {
-            // Check if on DM
-            $isVideoUploadedOnDM = false;
-            $nextDmVideosToCheck = [];
-            foreach ($this->dmVideosToCheck as $dmVideoToCheck) {
-                if ($dmVideoToCheck->getTitle() === $youtubeVideo->getTitle()) {
-                    $isVideoUploadedOnDM = true;
-                } else {
-                    $nextDmVideosToCheck[] = $dmVideoToCheck;
-                }
+        // Check if on DM
+        $isVideoUploadedOnDM = false;
+        $nextDmVideosToCheck = [];
+        foreach ($this->dmVideosToCheck as $dmVideoToCheck) {
+            if ($dmVideoToCheck->getTitle() === $youtubeVideo->getTitle()) {
+                $isVideoUploadedOnDM = true;
+            } else {
+                $nextDmVideosToCheck[] = $dmVideoToCheck;
             }
+        }
 
-            $this->dmVideosToCheck = $nextDmVideosToCheck;
+        $this->dmVideosToCheck = $nextDmVideosToCheck;
 
-            if (! $isVideoUploadedOnDM) {
-                echo
-                    PHP_EOL
-                    . PHP_EOL
-                    . 'Upload video'
-                    . PHP_EOL
-                    . '"'
-                    . $youtubeVideo->getTitle()
-                    . '" '
-                    . PHP_EOL
-                    . 'sur DailyMotion...'
-                ;
-                $dmToken = $this->login->login(
-                    $this->apiKey,
-                    $this->apiSecret,
-                    $this->username,
-                    $this->password
-                );
+        if (! $isVideoUploadedOnDM) {
+            echo
+                PHP_EOL
+                . PHP_EOL
+                . 'Upload video'
+                . PHP_EOL
+                . '"'
+                . $youtubeVideo->getTitle()
+                . '" '
+                . PHP_EOL
+                . 'sur DailyMotion...'
+            ;
+            $dmToken = $this->login->login(
+                $this->apiKey,
+                $this->apiSecret,
+                $this->username,
+                $this->password
+            );
 
-                if ($dmToken === null) {
-                    echo PHP_EOL . 'Erreur lors du login.';
+            if ($dmToken === null) {
+                echo PHP_EOL . 'Erreur lors du login.';
+            } else {
+                $dmUploadUrl = $this->uploadUrlCreator->create($dmToken);
+                if ($dmUploadUrl === null) {
+                    echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
                 } else {
-                    $dmUploadUrl = $this->uploadUrlCreator->create($dmToken);
-                    if ($dmUploadUrl === null) {
-                        echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
+                    $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
+                    if ($dmVideoUrl === null) {
+                        echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
                     } else {
-                        $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
-                        if ($dmVideoUrl === null) {
-                            echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
-                        } else {
-                            try {
-                                $dmVideoId = $dmVideoCreator->create(
-                                    $dmVideoUrl,
-                                    $youtubeVideo->getTitle(),
-                                    'Vidéo disponible sur Youtube : ' . $youtubeVideo->getUrl() . '
+                        try {
+                            $dmVideoId = $dmVideoCreator->create(
+                                $dmVideoUrl,
+                                $youtubeVideo->getTitle(),
+                                'Vidéo disponible sur Youtube : ' . $youtubeVideo->getUrl() . '
 
 ' . $youtubeVideo->getDescription()
-                                );
+                            );
 
-                                if ($dmVideoId) {
-                                    echo PHP_EOL . 'Vidéo uploadée !';
-                                }
-                            } catch (Exception $e) {
-                                echo PHP_EOL
-                                    . 'Erreur lors de la création de la vidéo : "'
-                                    . PHP_EOL
-                                    . $e->getMessage()
-                                    . '"'
-                                ;
+                            if ($dmVideoId) {
+                                echo PHP_EOL . 'Vidéo uploadée !';
                             }
+                        } catch (Exception $e) {
+                            echo PHP_EOL
+                                . 'Erreur lors de la création de la vidéo : "'
+                                . PHP_EOL
+                                . $e->getMessage()
+                                . '"'
+                            ;
                         }
                     }
                 }
