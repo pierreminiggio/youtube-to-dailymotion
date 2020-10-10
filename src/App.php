@@ -20,7 +20,6 @@ class App
         $dmVideoFetcher = new LatestDailymotionVideoFetcher();
     
         foreach ($config['groups'] as $group) {
-
             $dmVideoUploaderIfNeeded = null;
 
             if (
