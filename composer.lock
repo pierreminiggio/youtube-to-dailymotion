@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "athlon1600/youtube-downloader",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Athlon1600/youtube-downloader.git",
-                "reference": "e92b8763059cd28f72bf29b00896473fb503f5dc"
+                "reference": "a595645dec6fc2975caaf8f37dafa3ca303ea2c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Athlon1600/youtube-downloader/zipball/e92b8763059cd28f72bf29b00896473fb503f5dc",
-                "reference": "e92b8763059cd28f72bf29b00896473fb503f5dc",
+                "url": "https://api.github.com/repos/Athlon1600/youtube-downloader/zipball/a595645dec6fc2975caaf8f37dafa3ca303ea2c4",
+                "reference": "a595645dec6fc2975caaf8f37dafa3ca303ea2c4",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,11 @@
                 "download youtube videos",
                 "youtube downloader"
             ],
-            "time": "2020-07-28T15:14:30+00:00"
+            "support": {
+                "issues": "https://github.com/Athlon1600/youtube-downloader/issues",
+                "source": "https://github.com/Athlon1600/youtube-downloader/tree/v2.1.1"
+            },
+            "time": "2020-10-17T13:37:50+00:00"
         },
         {
             "name": "dailymotion/sdk",
@@ -77,6 +81,10 @@
                 "dailymotion",
                 "sdk"
             ],
+            "support": {
+                "issues": "https://github.com/dailymotion/dailymotion-sdk-php/issues",
+                "source": "https://github.com/dailymotion/dailymotion-sdk-php/tree/master"
+            },
             "time": "2015-11-20T11:18:32+00:00"
         }
     ],
@@ -87,5 +95,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }
