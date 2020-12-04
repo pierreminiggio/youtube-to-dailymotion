@@ -56,7 +56,7 @@ class YoutubeVideo
 
     private function getSanitizedTitle(): string
     {
-        return mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $this->title);
+        return str_replace('.', '', mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $this->title));
     }
 
     public function getSavedPath(): string
