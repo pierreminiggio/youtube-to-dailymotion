@@ -5,27 +5,24 @@ namespace PierreMiniggio\YoutubeToDailymotion\Youtube;
 class YoutubeVideo
 {
 
-    private string $channel;
     private string $id;
     private string $url;
-    private string $thumbnail;
     private string $title;
+    private string $sanitizedTitle;
     private string $description;
 
     public function __construct(
-        string $channel,
         string $id,
         string $url,
-        string $thumbnail,
         string $title,
+        string $sanitizedTitle,
         string $description
     )
     {
-        $this->channel = $channel;
         $this->id = $id;
         $this->url = $url;
-        $this->thumbnail = $thumbnail;
         $this->title = $title;
+        $this->sanitizedTitle = $sanitizedTitle;
         $this->description = $description;
     }
 
@@ -37,11 +34,6 @@ class YoutubeVideo
     public function getUrl(): string
     {
         return $this->url;
-    }
-
-    public function getThumbnail(): string
-    {
-        return $this->thumbnail;
     }
 
     public function getTitle(): string
@@ -56,7 +48,7 @@ class YoutubeVideo
 
     private function getSanitizedTitle(): string
     {
-        return str_replace('.', '', mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $this->title));
+        return $this->sanitizedTitle;
     }
 
     public function getSavedPath(): string
@@ -69,8 +61,6 @@ class YoutubeVideo
             . '..'
             . DIRECTORY_SEPARATOR
             . 'videos'
-            . DIRECTORY_SEPARATOR
-            . $this->channel
             . DIRECTORY_SEPARATOR
             . $this->getSanitizedTitle()
             . '.mp4'

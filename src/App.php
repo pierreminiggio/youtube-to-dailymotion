@@ -3,10 +3,12 @@
 namespace PierreMiniggio\YoutubeToDailymotion;
 
 use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUploadedException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\DailymotionVideoUploaderIfNeeded;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
 use PierreMiniggio\YoutubeToDailymotion\Repository\LinkedChannelRepository;
 use PierreMiniggio\YoutubeToDailymotion\Repository\NonUploadedVideoRepository;
+use PierreMiniggio\YoutubeToDailymotion\Repository\VideoToUploadRepository;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\YoutubeVideo;
 
@@ -23,6 +25,7 @@ class App
             $databaseConnection = (new DatabaseConnectionFactory())->makeFromConfig($config['db']);
             $channelRepository = new LinkedChannelRepository($databaseConnection);
             $nonUploadedVideoRepository = new NonUploadedVideoRepository($databaseConnection);
+            $videoToUploadRepository = new VideoToUploadRepository($databaseConnection);
 
             $channels = $channelRepository->findAll();
         
@@ -46,7 +49,19 @@ class App
 
                     foreach ($videosToUpload as $videoToUpload) {
                         echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
-    
+
+                        try {
+                            $dmVideoUploaderIfNeeded->uploadIfNeeded(new YoutubeVideo(
+                                $videoToUpload['youtube_id'],
+                                $videoToUpload['url'],
+                                $videoToUpload['title'],
+                                $videoToUpload['sanitized_title'],
+                                $videoToUpload['description']
+                            ));
+                        } catch (DailymotionAlreadyUploadedException $e) {
+                            $videoToUploadRepository->insertVideoIfNeeded($e->getVideoId(), $channel['d_id'], $videoToUpload['id']);
+                        }
+                        
                         echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
                     }
                 }

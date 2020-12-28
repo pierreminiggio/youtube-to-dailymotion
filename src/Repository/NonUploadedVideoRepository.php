@@ -25,6 +25,7 @@ class NonUploadedVideoRepository
         $videosToUpload = $this->connection->query('
             SELECT
                 y.id,
+                y.youtube_id,
                 y.url,
                 y.title,
                 y.sanitized_title,
