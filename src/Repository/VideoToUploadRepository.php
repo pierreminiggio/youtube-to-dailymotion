@@ -12,7 +12,7 @@ class VideoToUploadRepository
     public function insertVideoIfNeeded(
         string $dailymotionId,
         int $dailymotionChannelId,
-        int $youtubeChannelId
+        int $youtubeVideoId
     ): void
     {
         $this->connection->start();
@@ -32,11 +32,33 @@ class VideoToUploadRepository
             $this->connection->exec('
                 INSERT INTO dailymotion_video (channel_id, dailymotion_id)
                 VALUES (:channel_id, :dailymotion_id)
+                ;
             ', $videoQueryParams);
             $queriedIds = $this->connection->query(...$findVideoIdQuery);
         }
 
         $videoId = (int) $queriedIds[0]['id'];
-        var_dump($videoId); die();
+        
+        $pivotQueryParams = [
+            'dailymotion_id' => $videoId,
+            'youtube_id' => $youtubeVideoId
+        ];
+
+        $queriedPivotIds = $this->connection->query('
+            SELECT id FROM dailymotion_video_youtube_video
+            WHERE dailymotion_id = :dailymotion_id
+            AND youtube_id = :youtube_id
+            ;
+        ', $pivotQueryParams);
+        
+        if (! $queriedPivotIds) {
+            $this->connection->exec('
+                INSERT INTO dailymotion_video_youtube_video (dailymotion_id, youtube_id)
+                VALUES (:dailymotion_id, :youtube_id)
+                ;
+            ', $pivotQueryParams);
+        }
+
+        $this->connection->stop();
     }
 }
