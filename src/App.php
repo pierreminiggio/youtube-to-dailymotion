@@ -27,10 +27,22 @@ class App
             $channels = $channelRepository->findAll();
         
             foreach ($channels as $channel) {
+                echo PHP_EOL . PHP_EOL . 'Checking channel ' . $channel['dailymotion_id'] . '...';
+
                 $videosToUpload = $nonUploadedVideoRepository->findByDailymotionAndYoutubeChannelIds($channel['d_id'], $channel['y_id']);
-                var_dump($videosToUpload); die();
+
+                echo PHP_EOL . count($videosToUpload) . ' video(s) to upload :' . PHP_EOL;
+                
+                foreach ($videosToUpload as $videoToUpload) {
+                    echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
+
+                    echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
+                }
+
+                echo PHP_EOL . PHP_EOL . 'Done for channel ' . $channel['dailymotion_id'] . ' !';
             }
         }
+        die('test');
     
         foreach ($config['groups'] as $group) {
             $dmVideoUploaderIfNeeded = null;
