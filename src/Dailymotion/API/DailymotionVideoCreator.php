@@ -35,5 +35,7 @@ class DailymotionVideoCreator
         if (isset($res) && isset($res['id'])) {
             return $res['id'];
         }
+
+        throw new Exception('No id in JSON return : ' . json_encode($res));
     }
 }

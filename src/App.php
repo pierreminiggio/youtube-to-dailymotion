@@ -44,6 +44,7 @@ class App
                         $channel['api_key'],
                         $channel['api_secret'],
                         $channel['description_prefix'],
+                        $youtubeVideoDownloader,
                         $dmVideoFetcher
                     );
 
@@ -51,13 +52,14 @@ class App
                         echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
 
                         try {
-                            $dmVideoUploaderIfNeeded->uploadIfNeeded(new YoutubeVideo(
+                            $uploadedVideoId = $dmVideoUploaderIfNeeded->uploadIfNeeded(new YoutubeVideo(
                                 $videoToUpload['youtube_id'],
                                 $videoToUpload['url'],
                                 $videoToUpload['title'],
                                 $videoToUpload['sanitized_title'],
                                 $videoToUpload['description']
                             ));
+                            $videoToUploadRepository->insertVideoIfNeeded($uploadedVideoId, $channel['d_id'], $videoToUpload['id']);
                         } catch (DailymotionAlreadyUploadedException $e) {
                             $videoToUploadRepository->insertVideoIfNeeded($e->getVideoId(), $channel['d_id'], $videoToUpload['id']);
                         }
@@ -88,16 +90,5 @@ class App
         }
 
         return 0;
-    }
-
-    private function downloadVideoIfNeeded(VideoFileDownloader $downloader, YoutubeVideo $video): void
-    {
-        $videoFilePath = $video->getSavedPath();
-        if (! file_exists($videoFilePath)) {
-            $downloader->download(
-                $video->getUrl(),
-                $videoFilePath
-            );
-        }
     }
 }
