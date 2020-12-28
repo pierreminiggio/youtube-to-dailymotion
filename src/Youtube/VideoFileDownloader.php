@@ -84,7 +84,7 @@ class VideoFileDownloader
                 $prevPath .= DIRECTORY_SEPARATOR;
             }
             $prevPath .= $explodedPath[$i];
-            if (! is_dir($prevPath)) {
+            if ($prevPath && ! is_dir($prevPath)) {
                 mkdir($prevPath);
             }
         }
