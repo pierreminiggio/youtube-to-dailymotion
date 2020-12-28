@@ -119,7 +119,7 @@ class DailymotionVideoUploaderIfNeeded
         $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
 
         if ($dmVideoUrl === null) {
-            throw new DailymotionException('Erreur while temporary video upload.');
+            throw new DailymotionException('Error while temporary video upload.');
         }
 
         try {
@@ -135,8 +135,7 @@ class DailymotionVideoUploaderIfNeeded
             );
         } catch (Exception $e) {
             throw new DailymotionException(
-                'Error while creating the video : "'
-                . PHP_EOL
+                'Error while creating the video :' . PHP_EOL . '"'
                 . $e->getMessage()
                 . '"'
             );
