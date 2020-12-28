@@ -12,7 +12,7 @@ class App
 {
     public function run(): int
     {
-        $config = require(getcwd() . DIRECTORY_SEPARATOR . 'config.php');
+        $config = require(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config.php');
 
         $lastestYoutubeVideosFetcher = new LatestYoutubeVideoFetcher();
         $youtubeVideoDownloader = new VideoFileDownloader();
