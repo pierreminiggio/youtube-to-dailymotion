@@ -32,11 +32,23 @@ class App
                 $videosToUpload = $nonUploadedVideoRepository->findByDailymotionAndYoutubeChannelIds($channel['d_id'], $channel['y_id']);
 
                 echo PHP_EOL . count($videosToUpload) . ' video(s) to upload :' . PHP_EOL;
-                
-                foreach ($videosToUpload as $videoToUpload) {
-                    echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
 
-                    echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
+                if ($videosToUpload) {
+                    $dmVideoUploaderIfNeeded = new DailymotionVideoUploaderIfNeeded(
+                        $channel['dailymotion_id'],
+                        $channel['username'],
+                        $channel['password'],
+                        $channel['api_key'],
+                        $channel['api_secret'],
+                        $channel['description_prefix'],
+                        $dmVideoFetcher
+                    );
+
+                    foreach ($videosToUpload as $videoToUpload) {
+                        echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
+    
+                        echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
+                    }
                 }
 
                 echo PHP_EOL . PHP_EOL . 'Done for channel ' . $channel['dailymotion_id'] . ' !';
@@ -45,26 +57,6 @@ class App
         die('test');
     
         foreach ($config['groups'] as $group) {
-            $dmVideoUploaderIfNeeded = null;
-
-            if (
-                isset($group['dailymotion'])
-                && isset($group['dailymotion']['channelId'])
-                && isset($group['dailymotion']['username'])
-                && isset($group['dailymotion']['password'])
-                && isset($group['dailymotion']['api'])
-                && isset($group['dailymotion']['api']['key'])
-                && isset($group['dailymotion']['api']['secret'])
-            ) {
-                $dmVideoUploaderIfNeeded = new DailymotionVideoUploaderIfNeeded(
-                    $group['dailymotion']['channelId'],
-                    $group['dailymotion']['username'],
-                    $group['dailymotion']['password'],
-                    $group['dailymotion']['api']['key'],
-                    $group['dailymotion']['api']['secret'],
-                    $dmVideoFetcher
-                );
-            }
 
             $youtubeChannel = $group['youtube'];
 

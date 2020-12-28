@@ -17,6 +17,7 @@ class DailymotionVideoUploaderIfNeeded
     private string $password;
     private string $apiKey;
     private string $apiSecret;
+    private string $descriptionPrefix;
 
     private DailymotionApiLogin $login;
     private DailymotionUploadUrl $uploadUrlCreator;
@@ -31,6 +32,7 @@ class DailymotionVideoUploaderIfNeeded
         string $password,
         string $apiKey,
         string $apiSecret,
+        string $descriptionPrefix,
         LatestVideosFetcher $dmVideoFetcher
     )
     {
@@ -38,6 +40,7 @@ class DailymotionVideoUploaderIfNeeded
         $this->password = $password;
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
+        $this->descriptionPrefix = $descriptionPrefix;
 
         $this->login = new DailymotionApiLogin();
         $this->uploadUrlCreator = new DailymotionUploadUrl();
@@ -111,9 +114,12 @@ class DailymotionVideoUploaderIfNeeded
                             $dmVideoId = $dmVideoCreator->create(
                                 $dmVideoUrl,
                                 $youtubeVideo->getTitle(),
-                                'Vidéo disponible sur Youtube : ' . $youtubeVideo->getUrl() . '
-
-' . $youtubeVideo->getDescription()
+                                (! empty($this->descriptionPrefix) ? str_replace(
+                                    '[youtube_url]',
+                                    $youtubeVideo->getUrl(),
+                                    $this->descriptionPrefix
+                                ) : '')
+                                . $youtubeVideo->getDescription()
                             );
 
                             if ($dmVideoId) {
