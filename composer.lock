@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e8e128692507b49e82b12022223fb29",
+    "content-hash": "41088c41ea7ca373dfd2085854d73f68",
     "packages": [
         {
             "name": "athlon1600/youtube-downloader",
@@ -86,6 +86,43 @@
                 "source": "https://github.com/dailymotion/dailymotion-sdk-php/tree/master"
             },
             "time": "2015-11-20T11:18:32+00:00"
+        },
+        {
+            "name": "pierreminiggio/database-connection",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pierreminiggio/database-connection.git",
+                "reference": "ff55d9d7ea01f29855b2f8dba8e56ded661188ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pierreminiggio/database-connection/zipball/ff55d9d7ea01f29855b2f8dba8e56ded661188ac",
+                "reference": "ff55d9d7ea01f29855b2f8dba8e56ded661188ac",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PierreMiniggio\\DatabaseConnection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Pierre MINIGGIO",
+                    "email": "pierre@miniggiodev.fr"
+                }
+            ],
+            "description": "Interact with a SQL Database",
+            "support": {
+                "issues": "https://github.com/pierreminiggio/database-connection/issues",
+                "source": "https://github.com/pierreminiggio/database-connection/tree/1.2.1"
+            },
+            "time": "2020-12-27T17:59:34+00:00"
         }
     ],
     "packages-dev": [],

@@ -16,7 +16,7 @@
     },
     "require": {
         "athlon1600/youtube-downloader": "^2.1",
-        "dailymotion/sdk": "^1.6"
-    },
-    "require-dev": {}
+        "dailymotion/sdk": "^1.6",
+        "pierreminiggio/database-connection": "^1.2"
+    }
 }
