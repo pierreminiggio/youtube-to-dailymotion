@@ -127,6 +127,35 @@ ALTER TABLE `dailymotion_video`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pour la table `dailymotion_video_youtube_video`
+
+--
+-- Structure de la table `youtube_video_unpostable_on_dailymotion`
+--
+
+CREATE TABLE `youtube_video_unpostable_on_dailymotion` (
+  `id` int(11) NOT NULL,
+  `youtube_id` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `youtube_video_unpostable_on_dailymotion`
+--
+ALTER TABLE `youtube_video_unpostable_on_dailymotion`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `youtube_video_unpostable_on_dailymotion`
+--
+ALTER TABLE `youtube_video_unpostable_on_dailymotion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `dailymotion_video_youtube_video`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;

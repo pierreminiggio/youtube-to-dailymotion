@@ -4,9 +4,11 @@ namespace PierreMiniggio\YoutubeToDailymotion;
 
 use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUploadedException;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUnpostableVideoException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\DailymotionVideoUploaderIfNeeded;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
 use PierreMiniggio\YoutubeToDailymotion\Repository\LinkedChannelRepository;
+use PierreMiniggio\YoutubeToDailymotion\Repository\NonUploadableVideoRepository;
 use PierreMiniggio\YoutubeToDailymotion\Repository\NonUploadedVideoRepository;
 use PierreMiniggio\YoutubeToDailymotion\Repository\VideoToUploadRepository;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
@@ -26,6 +28,7 @@ class App
             $channelRepository = new LinkedChannelRepository($databaseConnection);
             $nonUploadedVideoRepository = new NonUploadedVideoRepository($databaseConnection);
             $videoToUploadRepository = new VideoToUploadRepository($databaseConnection);
+            $nonUploadableVideoRepository = new NonUploadableVideoRepository($databaseConnection);
 
             $channels = $channelRepository->findAll();
         
@@ -62,6 +65,8 @@ class App
                             $videoToUploadRepository->insertVideoIfNeeded($uploadedVideoId, $channel['d_id'], $videoToUpload['id']);
                         } catch (DailymotionAlreadyUploadedException $e) {
                             $videoToUploadRepository->insertVideoIfNeeded($e->getVideoId(), $channel['d_id'], $videoToUpload['id']);
+                        } catch (DailymotionUnpostableVideoException $e) {
+                            $nonUploadableVideoRepository->markAsNonUploadableIfNeeded($videoToUpload['id']);
                         }
                         
                         echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';

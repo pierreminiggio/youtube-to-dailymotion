@@ -8,6 +8,7 @@ use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUpload
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionApiLogin;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionFileUploader;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUnpostableVideoException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUploadUrl;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionVideoCreator;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
@@ -59,6 +60,7 @@ class DailymotionVideoUploaderIfNeeded
     /**
      * @throws DailymotionAlreadyUploadedException
      * @throws DailymotionException
+     * @throws DailymotionUnpostableVideoException
      */
     public function uploadIfNeeded(YoutubeVideo $youtubeVideo): string
     {
@@ -134,6 +136,11 @@ class DailymotionVideoUploaderIfNeeded
                 . $youtubeVideo->getDescription()
             );
         } catch (Exception $e) {
+
+            if (str_contains($e->getMessage(), 'Duration of this video is too long')) {
+                throw new DailymotionUnpostableVideoException();
+            }
+
             throw new DailymotionException(
                 'Error while creating the video :' . PHP_EOL . '"'
                 . $e->getMessage()

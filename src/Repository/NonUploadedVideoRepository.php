@@ -38,8 +38,11 @@ class NonUploadedVideoRepository
                     AND dvyv.dailymotion_id IN (' . implode(', ', $uploadedDailyMotionVideoIds) . ')'
                     : ''
             ) . '
+            LEFT JOIN youtube_video_unpostable_on_dailymotion as yvuod
+            ON yvuod.youtube_id = y.id
             
             WHERE y.channel_id = :channel_id
+            AND yvuod.id IS NULL
             ' . ($uploadedDailyMotionVideoIds ? 'AND dvyv.id IS NULL' : '') . '
             ;
         ', [
