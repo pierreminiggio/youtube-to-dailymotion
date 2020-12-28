@@ -117,7 +117,6 @@ class DailymotionVideoUploaderIfNeeded
         }
 
         $this->downloadVideoIfNeeded($youtubeVideo);
-
         $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
 
         if ($dmVideoUrl === null) {
@@ -125,7 +124,7 @@ class DailymotionVideoUploaderIfNeeded
         }
 
         try {
-            return $dmVideoCreator->create(
+            $dmVideoId = $dmVideoCreator->create(
                 $dmVideoUrl,
                 $youtubeVideo->getTitle(),
                 (! empty($this->descriptionPrefix) ? str_replace(
@@ -135,9 +134,13 @@ class DailymotionVideoUploaderIfNeeded
                 ) : '')
                 . $youtubeVideo->getDescription()
             );
+            $this->dropVideoFileIfPresent($youtubeVideo);
+
+            return $dmVideoId;
         } catch (Exception $e) {
 
             if (str_contains($e->getMessage(), 'Duration of this video is too long')) {
+                $this->dropVideoFileIfPresent($youtubeVideo);
                 throw new DailymotionUnpostableVideoException();
             }
 
@@ -157,6 +160,14 @@ class DailymotionVideoUploaderIfNeeded
                 $video->getUrl(),
                 $videoFilePath
             );
+        }
+    }
+
+    private function dropVideoFileIfPresent(YoutubeVideo $video): void
+    {
+        $videoFilePath = $video->getSavedPath();
+        if (file_exists($videoFilePath)) {
+            unlink($videoFilePath);
         }
     }
 }
