@@ -62,7 +62,11 @@ class YoutubeVideo
     public function getSavedPath(): string
     {
         return
-            getcwd()
+            __DIR__
+            . DIRECTORY_SEPARATOR
+            . '..'
+            . DIRECTORY_SEPARATOR
+            . '..'
             . DIRECTORY_SEPARATOR
             . 'videos'
             . DIRECTORY_SEPARATOR
