@@ -1,23 +1,28 @@
 <?php
 
-namespace PierreMiniggio\YoutubeChannelCloner;
+namespace PierreMiniggio\YoutubeToDailymotion;
 
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\DailymotionVideoUploaderIfNeeded;
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
-use PierreMiniggio\YoutubeChannelCloner\Youtube\LatestVideosFetcher as LatestYoutubeVideoFetcher;
-use PierreMiniggio\YoutubeChannelCloner\Youtube\VideoFileDownloader;
-use PierreMiniggio\YoutubeChannelCloner\Youtube\YoutubeVideo;
+use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\DailymotionVideoUploaderIfNeeded;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
+use PierreMiniggio\YoutubeToDailymotion\Repository\LinkedChannelRepository;
+use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
+use PierreMiniggio\YoutubeToDailymotion\Youtube\YoutubeVideo;
 
 class App
 {
     public function run(): int
     {
         $config = require(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config.php');
-
-        $lastestYoutubeVideosFetcher = new LatestYoutubeVideoFetcher();
+        
         $youtubeVideoDownloader = new VideoFileDownloader();
-
         $dmVideoFetcher = new LatestDailymotionVideoFetcher();
+
+        if (! empty($config['db'])) {
+            $repository = new LinkedChannelRepository((new DatabaseConnectionFactory())->makeFromConfig($config['db']));
+            $channels = $repository->findAll();
+            var_dump($channels); die();
+        }
     
         foreach ($config['groups'] as $group) {
             $dmVideoUploaderIfNeeded = null;

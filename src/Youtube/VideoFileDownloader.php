@@ -1,6 +1,6 @@
 <?php
 
-namespace PierreMiniggio\YoutubeChannelCloner\Youtube;
+namespace PierreMiniggio\YoutubeToDailymotion\Youtube;
 
 use Exception;
 

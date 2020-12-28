@@ -1,6 +1,6 @@
 <?php
 
-namespace PierreMiniggio\YoutubeChannelCloner\Dailymotion;
+namespace PierreMiniggio\YoutubeToDailymotion\Dailymotion;
 
 class DailymotionVideo
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace PierreMiniggio\YoutubeChannelCloner\Dailymotion;
+namespace PierreMiniggio\YoutubeToDailymotion\Dailymotion;
 
 use Dailymotion;
 use Exception;
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionApiLogin;
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionFileUploader;
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionUploadUrl;
-use PierreMiniggio\YoutubeChannelCloner\Dailymotion\API\DailymotionVideoCreator;
-use PierreMiniggio\YoutubeChannelCloner\Youtube\YoutubeVideo;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionApiLogin;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionFileUploader;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUploadUrl;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionVideoCreator;
+use PierreMiniggio\YoutubeToDailymotion\Youtube\YoutubeVideo;
 
 class DailymotionVideoUploaderIfNeeded
 {

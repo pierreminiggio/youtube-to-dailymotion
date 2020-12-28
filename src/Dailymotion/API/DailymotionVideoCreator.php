@@ -1,6 +1,6 @@
 <?php
 
-namespace PierreMiniggio\YoutubeChannelCloner\Dailymotion\API;
+namespace PierreMiniggio\YoutubeToDailymotion\Dailymotion\API;
 
 use Dailymotion;
 use Exception;
