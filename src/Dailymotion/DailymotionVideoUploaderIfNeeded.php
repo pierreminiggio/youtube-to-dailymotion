@@ -114,6 +114,8 @@ class DailymotionVideoUploaderIfNeeded
             throw new DailymotionException('Error while creating upload URL.');
         }
 
+        $this->downloadVideoIfNeeded($youtubeVideo);
+
         $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
 
         if ($dmVideoUrl === null) {
