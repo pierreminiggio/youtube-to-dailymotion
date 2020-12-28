@@ -81,13 +81,13 @@ class DailymotionVideoUploaderIfNeeded
             echo
                 PHP_EOL
                 . PHP_EOL
-                . 'Upload video'
+                . 'Uploading video'
                 . PHP_EOL
                 . '"'
                 . $youtubeVideo->getTitle()
                 . '" '
                 . PHP_EOL
-                . 'sur DailyMotion...'
+                . 'to DailyMotion...'
             ;
             $dmToken = $this->login->login(
                 $this->apiKey,
@@ -97,15 +97,15 @@ class DailymotionVideoUploaderIfNeeded
             );
 
             if ($dmToken === null) {
-                echo PHP_EOL . 'Erreur lors du login.';
+                echo PHP_EOL . 'Error while logging in.';
             } else {
                 $dmUploadUrl = $this->uploadUrlCreator->create($dmToken);
                 if ($dmUploadUrl === null) {
-                    echo PHP_EOL . 'Erreur lors de la création de l\'url d\'upload.';
+                    echo PHP_EOL . 'Error while creating upload URL.';
                 } else {
                     $dmVideoUrl = $this->fileUploader->upload($dmUploadUrl, $youtubeVideo->getSavedPath());
                     if ($dmVideoUrl === null) {
-                        echo PHP_EOL . 'Erreur lors de l\'upload de la vidéo temporaire.';
+                        echo PHP_EOL . 'Erreur while temporary video upload.';
                     } else {
                         try {
                             $dmVideoId = $dmVideoCreator->create(
@@ -117,11 +117,11 @@ class DailymotionVideoUploaderIfNeeded
                             );
 
                             if ($dmVideoId) {
-                                echo PHP_EOL . 'Vidéo uploadée !';
+                                echo PHP_EOL . 'Video uploaded !';
                             }
                         } catch (Exception $e) {
                             echo PHP_EOL
-                                . 'Erreur lors de la création de la vidéo : "'
+                                . 'Error while creating the video : "'
                                 . PHP_EOL
                                 . $e->getMessage()
                                 . '"'

@@ -6,6 +6,7 @@ use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\DailymotionVideoUploaderIfNeeded;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
 use PierreMiniggio\YoutubeToDailymotion\Repository\LinkedChannelRepository;
+use PierreMiniggio\YoutubeToDailymotion\Repository\NonUploadedVideoRepository;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\YoutubeVideo;
 
@@ -19,9 +20,16 @@ class App
         $dmVideoFetcher = new LatestDailymotionVideoFetcher();
 
         if (! empty($config['db'])) {
-            $repository = new LinkedChannelRepository((new DatabaseConnectionFactory())->makeFromConfig($config['db']));
-            $channels = $repository->findAll();
-            var_dump($channels); die();
+            $databaseConnection = (new DatabaseConnectionFactory())->makeFromConfig($config['db']);
+            $channelRepository = new LinkedChannelRepository($databaseConnection);
+            $nonUploadedVideoRepository = new NonUploadedVideoRepository($databaseConnection);
+
+            $channels = $channelRepository->findAll();
+        
+            foreach ($channels as $channel) {
+                $videosToUpload = $nonUploadedVideoRepository->findByDailymotionAndYoutubeChannelIds($channel['d_id'], $channel['y_id']);
+                var_dump($videosToUpload); die();
+            }
         }
     
         foreach ($config['groups'] as $group) {

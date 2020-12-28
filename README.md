@@ -61,7 +61,7 @@ CREATE TABLE `dailymotion_channel_youtube_channel` (
 CREATE TABLE `dailymotion_video` (
   `id` int(11) NOT NULL,
   `channel_id` int(11) NOT NULL,
-  `dailymotion_id` int(11) NOT NULL,
+  `dailymotion_id` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
