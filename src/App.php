@@ -63,13 +63,14 @@ class App
                                 $videoToUpload['description']
                             ));
                             $videoToUploadRepository->insertVideoIfNeeded($uploadedVideoId, $channel['d_id'], $videoToUpload['id']);
+                            echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
                         } catch (DailymotionAlreadyUploadedException $e) {
                             $videoToUploadRepository->insertVideoIfNeeded($e->getVideoId(), $channel['d_id'], $videoToUpload['id']);
+                            echo PHP_EOL . $videoToUpload['title'] . ' marked as uploaded !';
                         } catch (DailymotionUnpostableVideoException $e) {
                             $nonUploadableVideoRepository->markAsNonUploadableIfNeeded($videoToUpload['id']);
+                            echo PHP_EOL . $videoToUpload['title'] . ' marked as non-uploadable !';
                         }
-                        
-                        echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
                     }
                 }
 

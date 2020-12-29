@@ -139,7 +139,10 @@ class DailymotionVideoUploaderIfNeeded
             return $dmVideoId;
         } catch (Exception $e) {
 
-            if (str_contains($e->getMessage(), 'Duration of this video is too long')) {
+            if (
+                str_contains($e->getMessage(), 'Duration of this video is too long')
+                || $e->getMessage() === 'This video has exceeded maximum duration allowed'
+            ) {
                 $this->dropVideoFileIfPresent($youtubeVideo);
                 throw new DailymotionUnpostableVideoException();
             }
