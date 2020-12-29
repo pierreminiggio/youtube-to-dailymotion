@@ -4,6 +4,7 @@ namespace PierreMiniggio\YoutubeToDailymotion;
 
 use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUploadedException;
+use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUnpostableVideoException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\DailymotionVideoUploaderIfNeeded;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\LatestVideosFetcher as LatestDailymotionVideoFetcher;
@@ -35,43 +36,48 @@ class App
             foreach ($channels as $channel) {
                 echo PHP_EOL . PHP_EOL . 'Checking channel ' . $channel['dailymotion_id'] . '...';
 
-                $videosToUpload = $nonUploadedVideoRepository->findByDailymotionAndYoutubeChannelIds($channel['d_id'], $channel['y_id']);
+                try {
 
-                echo PHP_EOL . count($videosToUpload) . ' video(s) to upload :' . PHP_EOL;
+                    $videosToUpload = $nonUploadedVideoRepository->findByDailymotionAndYoutubeChannelIds($channel['d_id'], $channel['y_id']);
 
-                if ($videosToUpload) {
-                    $dmVideoUploaderIfNeeded = new DailymotionVideoUploaderIfNeeded(
-                        $channel['dailymotion_id'],
-                        $channel['username'],
-                        $channel['password'],
-                        $channel['api_key'],
-                        $channel['api_secret'],
-                        $channel['description_prefix'],
-                        $youtubeVideoDownloader,
-                        $dmVideoFetcher
-                    );
+                    echo PHP_EOL . count($videosToUpload) . ' video(s) to upload :' . PHP_EOL;
 
-                    foreach ($videosToUpload as $videoToUpload) {
-                        echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
+                    if ($videosToUpload) {
+                        $dmVideoUploaderIfNeeded = new DailymotionVideoUploaderIfNeeded(
+                            $channel['dailymotion_id'],
+                            $channel['username'],
+                            $channel['password'],
+                            $channel['api_key'],
+                            $channel['api_secret'],
+                            $channel['description_prefix'],
+                            $youtubeVideoDownloader,
+                            $dmVideoFetcher
+                        );
 
-                        try {
-                            $uploadedVideoId = $dmVideoUploaderIfNeeded->uploadIfNeeded(new YoutubeVideo(
-                                $videoToUpload['youtube_id'],
-                                $videoToUpload['url'],
-                                $videoToUpload['title'],
-                                $videoToUpload['sanitized_title'],
-                                $videoToUpload['description']
-                            ));
-                            $videoToUploadRepository->insertVideoIfNeeded($uploadedVideoId, $channel['d_id'], $videoToUpload['id']);
-                            echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
-                        } catch (DailymotionAlreadyUploadedException $e) {
-                            $videoToUploadRepository->insertVideoIfNeeded($e->getVideoId(), $channel['d_id'], $videoToUpload['id']);
-                            echo PHP_EOL . $videoToUpload['title'] . ' marked as uploaded !';
-                        } catch (DailymotionUnpostableVideoException $e) {
-                            $nonUploadableVideoRepository->markAsNonUploadableIfNeeded($videoToUpload['id']);
-                            echo PHP_EOL . $videoToUpload['title'] . ' marked as non-uploadable !';
+                        foreach ($videosToUpload as $videoToUpload) {
+                            echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
+
+                            try {
+                                $uploadedVideoId = $dmVideoUploaderIfNeeded->uploadIfNeeded(new YoutubeVideo(
+                                    $videoToUpload['youtube_id'],
+                                    $videoToUpload['url'],
+                                    $videoToUpload['title'],
+                                    $videoToUpload['sanitized_title'],
+                                    $videoToUpload['description']
+                                ));
+                                $videoToUploadRepository->insertVideoIfNeeded($uploadedVideoId, $channel['d_id'], $videoToUpload['id']);
+                                echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
+                            } catch (DailymotionAlreadyUploadedException $e) {
+                                $videoToUploadRepository->insertVideoIfNeeded($e->getVideoId(), $channel['d_id'], $videoToUpload['id']);
+                                echo PHP_EOL . $videoToUpload['title'] . ' marked as uploaded !';
+                            } catch (DailymotionUnpostableVideoException $e) {
+                                $nonUploadableVideoRepository->markAsNonUploadableIfNeeded($videoToUpload['id']);
+                                echo PHP_EOL . $videoToUpload['title'] . ' marked as non-uploadable !';
+                            }
                         }
                     }
+                } catch (DailymotionException $e) {
+                    echo PHP_EOL . 'Error : ' . $e->getMessage();
                 }
 
                 echo PHP_EOL . PHP_EOL . 'Done for channel ' . $channel['dailymotion_id'] . ' !';
