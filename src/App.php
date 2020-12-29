@@ -76,23 +76,6 @@ class App
                 echo PHP_EOL . PHP_EOL . 'Done for channel ' . $channel['dailymotion_id'] . ' !';
             }
         }
-        die('test');
-    
-        foreach ($config['groups'] as $group) {
-
-            $youtubeChannel = $group['youtube'];
-
-            $youtubeVideos = array_reverse($lastestYoutubeVideosFetcher->fetch($youtubeChannel));
-
-            foreach ($youtubeVideos as $youtubeVideo) {
-
-                $this->downloadVideoIfNeeded($youtubeVideoDownloader, $youtubeVideo);
-
-                if ($dmVideoUploaderIfNeeded) {
-                    $dmVideoUploaderIfNeeded->uploadIfNeeded($youtubeVideo);
-                }
-            }
-        }
 
         return 0;
     }
