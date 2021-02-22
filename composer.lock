@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41088c41ea7ca373dfd2085854d73f68",
+    "content-hash": "9044d18fe14a8143fc3b527e576f9fe9",
     "packages": [
         {
             "name": "athlon1600/youtube-downloader",
@@ -123,6 +123,44 @@
                 "source": "https://github.com/pierreminiggio/database-connection/tree/1.2.1"
             },
             "time": "2020-12-27T17:59:34+00:00"
+        },
+        {
+            "name": "pierreminiggio/mp4-youtube-video-downloader",
+            "version": "1.0.01",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pierreminiggio/php-mp4-youtube-video-downloader.git",
+                "reference": "97cdceebb789a1dc6a620d14460968d851d91cc2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pierreminiggio/php-mp4-youtube-video-downloader/zipball/97cdceebb789a1dc6a620d14460968d851d91cc2",
+                "reference": "97cdceebb789a1dc6a620d14460968d851d91cc2",
+                "shasum": ""
+            },
+            "require": {
+                "athlon1600/youtube-downloader": "^2.0",
+                "php": "^7.2 || ^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PierreMiniggio\\MP4YoutubeVideoDownloader\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Pierre MINIGGIO",
+                    "email": "pierre@miniggiodev.fr"
+                }
+            ],
+            "description": "Vegas Renderer",
+            "support": {
+                "issues": "https://github.com/pierreminiggio/php-mp4-youtube-video-downloader/issues",
+                "source": "https://github.com/pierreminiggio/php-mp4-youtube-video-downloader/tree/1.0.01"
+            },
+            "time": "2021-02-22T18:53:12+00:00"
         }
     ],
     "packages-dev": [],

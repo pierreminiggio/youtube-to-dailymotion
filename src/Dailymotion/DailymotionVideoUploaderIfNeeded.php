@@ -4,6 +4,7 @@ namespace PierreMiniggio\YoutubeToDailymotion\Dailymotion;
 
 use Dailymotion;
 use Exception;
+use PierreMiniggio\MP4YoutubeVideoDownloader\Downloader;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUploadedException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionApiLogin;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionException;
@@ -11,7 +12,6 @@ use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionFileUploader;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUnpostableVideoException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionUploadUrl;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionVideoCreator;
-use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\YoutubeVideo;
 
 class DailymotionVideoUploaderIfNeeded
@@ -22,7 +22,7 @@ class DailymotionVideoUploaderIfNeeded
     private string $apiKey;
     private string $apiSecret;
     private string $descriptionPrefix;
-    private VideoFileDownloader $downloader;
+    private Downloader $downloader;
 
     private DailymotionApiLogin $login;
     private DailymotionUploadUrl $uploadUrlCreator;
@@ -38,7 +38,7 @@ class DailymotionVideoUploaderIfNeeded
         string $apiKey,
         string $apiSecret,
         string $descriptionPrefix,
-        VideoFileDownloader $downloader,
+        Downloader $downloader,
         LatestVideosFetcher $dmVideoFetcher
     )
     {

@@ -2,6 +2,7 @@
 
 namespace PierreMiniggio\YoutubeToDailymotion;
 
+use PierreMiniggio\MP4YoutubeVideoDownloader\Downloader;
 use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUploadedException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionException;
@@ -12,7 +13,6 @@ use PierreMiniggio\YoutubeToDailymotion\Repository\LinkedChannelRepository;
 use PierreMiniggio\YoutubeToDailymotion\Repository\NonUploadableVideoRepository;
 use PierreMiniggio\YoutubeToDailymotion\Repository\NonUploadedVideoRepository;
 use PierreMiniggio\YoutubeToDailymotion\Repository\VideoToUploadRepository;
-use PierreMiniggio\YoutubeToDailymotion\Youtube\VideoFileDownloader;
 use PierreMiniggio\YoutubeToDailymotion\Youtube\YoutubeVideo;
 
 class App
@@ -21,7 +21,7 @@ class App
     {
         $config = require(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config.php');
         
-        $youtubeVideoDownloader = new VideoFileDownloader();
+        $youtubeVideoDownloader = new Downloader();
         $dmVideoFetcher = new LatestDailymotionVideoFetcher();
 
         if (! empty($config['db'])) {

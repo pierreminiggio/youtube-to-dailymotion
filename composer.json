@@ -15,8 +15,8 @@
         "sort-packages": true
     },
     "require": {
-        "athlon1600/youtube-downloader": "^2.1",
         "dailymotion/sdk": "^1.6",
-        "pierreminiggio/database-connection": "^1.2"
+        "pierreminiggio/database-connection": "^1.2",
+        "pierreminiggio/mp4-youtube-video-downloader": "^1.0"
     }
 }
