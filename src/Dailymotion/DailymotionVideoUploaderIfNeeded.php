@@ -160,10 +160,18 @@ class DailymotionVideoUploaderIfNeeded
     {
         $videoFilePath = $video->getSavedPath();
         if (! file_exists($videoFilePath)) {
-            $this->downloader->download(
-                $video->getUrl(),
-                $videoFilePath
-            );
+            try {
+                $this->downloader->download(
+                    $video->getUrl(),
+                    $videoFilePath
+                );
+            } catch (Exception $e) {
+                if ($e->getMessage() !== 'Best link not found') {
+                    throw new Exception('Dailymotion Exception : ' . $e->getMessage());
+                }
+                
+                shell_exec('youtube-dl ' . $video->getUrl() . ' -f mp4 --output ' . $videoFilePath);
+            }
         }
     }
 
