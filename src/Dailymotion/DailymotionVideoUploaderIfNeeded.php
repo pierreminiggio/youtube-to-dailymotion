@@ -170,7 +170,8 @@ class DailymotionVideoUploaderIfNeeded
                     throw new Exception('Dailymotion Exception : ' . $e->getMessage());
                 }
                 
-                shell_exec('youtube-dl ' . $video->getUrl() . ' -f mp4 --output ' . $videoFilePath);
+                $youtubeDLCommand = 'youtube-dl https://youtu.be/' . substr($video->getUrl(), strlen('https://www.youtube.com/watch?v=')) . ' -f mp4 --output ' . escapeshellarg($videoFilePath);
+                shell_exec($youtubeDLCommand);
             }
         }
     }

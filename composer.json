@@ -16,6 +16,7 @@
     },
     "require": {
         "dailymotion/sdk": "^1.6",
+        "illuminate/support": "^8.41",
         "pierreminiggio/database-connection": "^1.2",
         "pierreminiggio/mp4-youtube-video-downloader": "^1.0"
     }

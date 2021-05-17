@@ -2,6 +2,8 @@
 
 namespace PierreMiniggio\YoutubeToDailymotion\Youtube;
 
+use Illuminate\Support\Str;
+
 class YoutubeVideo
 {
 
@@ -62,7 +64,7 @@ class YoutubeVideo
             . DIRECTORY_SEPARATOR
             . 'videos'
             . DIRECTORY_SEPARATOR
-            . $this->getSanitizedTitle()
+            . Str::slug($this->getSanitizedTitle())
             . '.mp4'
         ;
     }
