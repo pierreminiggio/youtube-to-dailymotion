@@ -28,7 +28,8 @@ class DailymotionVideoCreator
                 'description' => $videoDescription,
                 'tags' => 'developpement,informatique,découverte,éducation',
                 'channel' => 'school',
-                'published' => true
+                'published' => true,
+                'is_created_for_kids' => false
             ]
         );
 
