@@ -72,6 +72,8 @@ class App
                                    if (strlen($nextDailymotionDescription) > $dailymotionMaxDescriptionLength) {
                                        break;
                                    }
+
+                                   $dailymotionDescription = $nextDailymotionDescription;
                                 }
                             } else {
                                  $dailymotionDescription = $youtubeDescription;
