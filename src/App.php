@@ -23,6 +23,7 @@ class App
         
         $youtubeVideoDownloader = new Downloader();
         $dmVideoFetcher = new LatestDailymotionVideoFetcher();
+        $dailymotionMaxDescriptionLength = 3000;
 
         if (! empty($config['db'])) {
             $databaseConnection = (new DatabaseConnectionFactory())->makeFromConfig($config['db']);
@@ -56,6 +57,25 @@ class App
 
                         foreach ($videosToUpload as $videoToUpload) {
                             echo PHP_EOL . 'Uploading ' . $videoToUpload['title'] . ' ...';
+                            $youtubeDescription = $videoToUpload['description'];
+
+                            if (strlen($youtubeDescription) > $dailymotionMaxDescriptionLength) {
+                                $dailymotionDescription = '';
+                                foreach (explode(' ', $youtubeDescription) as $wordIndex => $word) {
+                                    $nextDailymotionDescription = $dailymotionDescription;
+                                    if ($wordIndex > 0) {
+                                        $nextDailymotionDescription .= ' ';
+                                    }
+
+                                   $nextDailymotionDescription .= $word;
+
+                                   if (strlen($nextDailymotionDescription) > $dailymotionMaxDescriptionLength) {
+                                       break;
+                                   }
+                                }
+                            } else {
+                                 $dailymotionDescription = $youtubeDescription;
+                            }
 
                             try {
                                 $uploadedVideoId = $dmVideoUploaderIfNeeded->uploadIfNeeded(new YoutubeVideo(
@@ -63,7 +83,7 @@ class App
                                     $videoToUpload['url'],
                                     $videoToUpload['title'],
                                     $videoToUpload['sanitized_title'],
-                                    $videoToUpload['description']
+                                    $dailymotionDescription
                                 ));
                                 $videoToUploadRepository->insertVideoIfNeeded($uploadedVideoId, $channel['d_id'], $videoToUpload['id']);
                                 echo PHP_EOL . $videoToUpload['title'] . ' uploaded !';
