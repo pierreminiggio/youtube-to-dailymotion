@@ -38,7 +38,6 @@ class App
                 echo PHP_EOL . PHP_EOL . 'Checking channel ' . $channel['dailymotion_id'] . '...';
 
                 try {
-
                     $videosToUpload = $nonUploadedVideoRepository->findByDailymotionAndYoutubeChannelIds($channel['d_id'], $channel['y_id']);
 
                     echo PHP_EOL . count($videosToUpload) . ' video(s) to upload :' . PHP_EOL;
@@ -67,13 +66,13 @@ class App
                                         $nextDailymotionDescription .= ' ';
                                     }
 
-                                   $nextDailymotionDescription .= $word;
+                                    $nextDailymotionDescription .= $word;
 
-                                   if (strlen($nextDailymotionDescription) > $dailymotionMaxDescriptionLength) {
-                                       break;
-                                   }
+                                    if (strlen($nextDailymotionDescription) > $dailymotionMaxDescriptionLength) {
+                                        break;
+                                    }
 
-                                   $dailymotionDescription = $nextDailymotionDescription;
+                                    $dailymotionDescription = $nextDailymotionDescription;
                                 }
                             } else {
                                  $dailymotionDescription = $youtubeDescription;
