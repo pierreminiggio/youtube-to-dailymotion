@@ -2,7 +2,9 @@
 
 namespace PierreMiniggio\YoutubeToDailymotion;
 
+use Exception;
 use PierreMiniggio\MP4YoutubeVideoDownloader\Downloader;
+use PierreMiniggio\MP4YoutubeVideoDownloader\Repository;
 use PierreMiniggio\YoutubeToDailymotion\Connection\DatabaseConnectionFactory;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionAlreadyUploadedException;
 use PierreMiniggio\YoutubeToDailymotion\Dailymotion\API\DailymotionException;
@@ -20,8 +22,36 @@ class App
     public function run(): int
     {
         $config = require(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config.php');
+
+        $yt1dApiRepoConfig = $config['yt1dApiRepo'] ?? null;
+
+        if (! $yt1dApiRepoConfig) {
+            throw new Exception('Unset yt1dApiRepo config error');
+        }
+
+        $githubActionToken = $yt1dApiRepoConfig['token'] ?? null;
+
+        if (! $githubActionToken) {
+            throw new Exception('Unset githubActionToken config error');
+        }
+
+        $yt1dApiOwner = $yt1dApiRepoConfig['owner'] ?? null;
+
+        if (! $yt1dApiOwner) {
+            throw new Exception('Unset yt1dApiOwner config error');
+        }
+
+        $yt1dApiRepo = $yt1dApiRepoConfig['repo'] ?? null;
+
+        if (! $yt1dApiRepo) {
+            throw new Exception('Unset yt1dApiRepo config error');
+        }
         
-        $youtubeVideoDownloader = new Downloader();
+        $youtubeVideoDownloader = new Downloader(new Repository(
+            $githubActionToken,
+            $yt1dApiOwner,
+            $yt1dApiRepo
+        ));
         $dmVideoFetcher = new LatestDailymotionVideoFetcher();
         $dailymotionMaxDescriptionLength = 3000;
 
